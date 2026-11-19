@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Malfoid for GTA VI</title>
-<meta name="description" content="Petition to Rockstar Games: make Malfoid, the gender-swapped Draco Malfoy, the heroine of GTA VI.">
-<meta property="og:title" content="Petition: Make Malfoid the heroine of GTA VI">
-<meta property="og:description" content="Vice City deserves a smug platinum-blonde Slytherin. Sign now.">
+<meta name="description" content="Petition to Rockstar Games: cast Malfoid as the female protagonist of Grand Theft Auto VI.">
+<meta property="og:title" content="Petition: Malfoid as the female protagonist of GTA VI">
+<meta property="og:description" content="Thousands of players are asking Rockstar Games to listen. Add your name.">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -62,6 +62,9 @@
   }
   textarea { min-height: 80px; resize: vertical; }
   .hp { position: absolute; left: -9999px; }
+  label.check { display: flex; gap: 10px; align-items: flex-start; font-weight: 400; font-size: 14px; color: var(--muted); }
+  .notice { margin: 0; font-size: 14px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--field); }
+  label.check input { width: auto; margin-top: 4px; flex: none; }
   button {
     font: 800 17px Inter, sans-serif; text-transform: uppercase; letter-spacing: .06em;
     border: 0; border-radius: 12px; padding: 14px; cursor: pointer; color: #fff;
@@ -88,40 +91,43 @@
 <body>
 <header class="hero">
   <div class="kicker">Petition to Rockstar Games</div>
-  <h1>Make <span class="m">Malfoid</span> the heroine of GTA VI</h1>
-  <p class="sub">Vice City has palm trees, neon and alligators. What it's missing is a smug, platinum-blonde Slytherin who calls everyone a filthy muggle.</p>
+  <h1><span class="m">Malfoid</span> as the protagonist of GTA VI</h1>
+  <p class="sub">Players are asking Rockstar Games to cast Malfoid as the female protagonist of Grand Theft Auto VI. Add your name to show the demand is real.</p>
   <div class="counter"><b id="count">…</b> signatures <div class="bar"><i id="bar"></i></div><small id="goal"></small></div>
 </header>
 
 <main>
   <article class="card letter">
-    <h2>Why we're signing</h2>
-    <div class="to">To: Rockstar Games and the GTA VI team</div>
-    <p>We, the undersigned, respectfully ask that the female protagonist of <strong>Grand Theft Auto VI</strong> be replaced with <strong>Malfoid</strong>. That's the gender-swapped Draco Malfoy who took over fan art in the fall of 2026.</p>
-    <p>Our case:</p>
+    <h2>Our request</h2>
+    <div class="to">To: Rockstar Games and Take-Two Interactive</div>
+    <p>We, the undersigned players, ask Rockstar Games to cast <strong>Malfoid</strong> as the female protagonist of <strong>Grand Theft Auto VI</strong>, in place of the current lead.</p>
+    <p>Malfoid is the female reimagining of Draco Malfoy that spread across social media in the fall of 2026. In a few weeks she became one of the most drawn and shared characters online, with fan art reaching hundreds of thousands of people and coverage in mainstream entertainment media.</p>
+    <p>We believe she would make a strong lead for the series:</p>
     <ul>
-      <li><strong>She's already a criminal mastermind.</strong> Years of scheming in Slytherin common rooms make a heist in Leonida look easy.</li>
-      <li><strong>Built-in rivalry.</strong> Every cutscene gets better when someone mutters "my father will hear about this."</li>
-      <li><strong>Iconic look.</strong> Platinum hair, green and silver, a permanent smirk. She'd be recognizable from a helicopter at 3,000 feet.</li>
-      <li><strong>The internet has spoken.</strong> Thousands of fan artists can't all be wrong.</li>
-      <li><strong>Brooms are faster than mopeds.</strong> Just saying.</li>
+      <li><strong>Proven audience.</strong> Few characters have gathered such a large and active community so quickly. That audience is already engaged and ready to follow her.</li>
+      <li><strong>A clear personality.</strong> Ambitious, proud and morally ambiguous, she fits the tone of a Grand Theft Auto story naturally.</li>
+      <li><strong>A recognizable identity.</strong> Her look is instantly identifiable, which matters for a lead character in a game of this scale.</li>
+      <li><strong>Listening to players.</strong> Grand Theft Auto has always reflected internet culture. This is an opportunity to show that player voices are heard.</li>
     </ul>
-    <p>We don't ask for much: one platinum-blonde heroine, one sarcastic voice line per mission, and at least one loading screen that says "Malfoid would never." Jason can stay. He'll be fine.</p>
-    <p><strong>Sign below and share with every Slytherin you know.</strong></p>
+    <p>We understand that this request raises questions of licensing and production. We ask Rockstar Games to consider it seriously, to explore an agreement with the rights holders if needed, and to respond publicly to the players who sign.</p>
+    <p><strong>If you agree, sign below and share this petition.</strong></p>
   </article>
 
   <div class="side">
     <section class="card" id="sign">
       <h2>Sign the petition</h2>
       <form id="f" autocomplete="on">
-        <label>Name or nickname <input name="name" maxlength="60" required></label>
+        <label>Full name <input name="name" maxlength="60" autocomplete="name" required></label>
+        <label>Email <input name="email" type="email" maxlength="254" autocomplete="email" required></label>
         <label>Country (optional) <input name="country" maxlength="40"></label>
         <label>Why are you signing? (optional) <textarea name="comment" maxlength="280"></textarea></label>
+        <p class="notice"><strong>By signing, you will receive emails from us about this petition</strong>: its progress, its delivery to Rockstar Games and any response. Every email includes an unsubscribe link.</p>
+        <label class="check"><input type="checkbox" name="consent" required> I agree to receive these emails, and that my name, country and comment are displayed publicly.</label>
         <label class="hp" aria-hidden="true">Website <input name="website" tabindex="-1" autocomplete="off"></label>
         <button type="submit" id="btn">Sign now</button>
         <div class="msg" id="msg" role="status"></div>
       </form>
-      <p style="color:var(--muted);font-size:13px;margin:10px 0 0">Your name, country and comment are shown publicly. We don't ask for your email.</p>
+      <p style="color:var(--muted);font-size:13px;margin:10px 0 0">Your email is never displayed, shared or sold. It is used to prevent duplicate signatures and to send you emails about this petition. You can unsubscribe at any time.</p>
       <div class="share">
         <a id="sx" target="_blank" rel="noopener">Share on X</a>
         <a id="sr" target="_blank" rel="noopener">Reddit</a>
@@ -138,7 +144,7 @@
 </main>
 
 <footer>
-  A fan-made, tongue-in-cheek petition. Not affiliated with, endorsed by or sent to Rockstar Games, Take-Two Interactive, Warner Bros. or J.K. Rowling. Grand Theft Auto and Harry Potter are trademarks of their respective owners.
+  An independent petition started by players. It is not affiliated with or endorsed by Rockstar Games, Take-Two Interactive, Warner Bros. or J.K. Rowling. Grand Theft Auto and Harry Potter are trademarks of their respective owners.
 </footer>
 
 <script>
@@ -148,9 +154,9 @@
     if (t) document.documentElement.setAttribute('data-theme', t);
   } catch (e) {}
   var url = location.origin + '/';
-  var text = 'I signed: make Malfoid the heroine of GTA VI 🐍🌴';
+  var text = 'I signed the petition asking Rockstar Games to cast Malfoid as the female protagonist of GTA VI.';
   document.getElementById('sx').href = 'https://x.com/intent/post?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(url);
-  document.getElementById('sr').href = 'https://www.reddit.com/submit?url=' + encodeURIComponent(url) + '&title=' + encodeURIComponent('Petition: make Malfoid the heroine of GTA VI');
+  document.getElementById('sr').href = 'https://www.reddit.com/submit?url=' + encodeURIComponent(url) + '&title=' + encodeURIComponent('Petition: Malfoid as the female protagonist of GTA VI');
   document.getElementById('sw').href = 'https://wa.me/?text=' + encodeURIComponent(text + ' ' + url);
   document.getElementById('copy').onclick = function () {
     var b = this;
@@ -183,12 +189,12 @@
   var f = document.getElementById('f'), msg = document.getElementById('msg'), btn = document.getElementById('btn');
   f.addEventListener('submit', function (ev) {
     ev.preventDefault();
-    var body = {}; new FormData(f).forEach(function (v, k) { body[k] = v; });
+    var body = {}; new FormData(f).forEach(function (v, k) { body[k] = v; }); body.consent = f.consent.checked;
     btn.disabled = true; msg.className = 'msg'; msg.textContent = '';
     fetch('/api/sign', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) })
       .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
       .then(function (x) {
-        if (x.ok) { msg.className = 'msg ok'; msg.textContent = 'Thank you! Now share it so Malfoid gets her keys to Vice City.'; f.reset(); load(); }
+        if (x.ok) { msg.className = 'msg ok'; msg.textContent = 'Thank you for signing. Please share the petition to help it reach Rockstar Games.'; f.reset(); load(); }
         else { msg.className = 'msg err'; msg.textContent = x.d.error || 'Something went wrong.'; }
       })
       .catch(function () { msg.className = 'msg err'; msg.textContent = 'Network error. Please try again.'; })

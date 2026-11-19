@@ -1,4 +1,4 @@
-// Petition "Make Malfoid the heroine of GTA VI" — zero-dependency Node server.
+// Petition "Malfoid as the female protagonist of GTA VI" — zero-dependency Node server.
 // Signatures live in SQLite (node:sqlite) under DATA_DIR (a persistent volume on Coolify).
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
@@ -21,12 +21,18 @@ db.exec(`CREATE TABLE IF NOT EXISTS signatures (
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 )`);
 db.exec('CREATE INDEX IF NOT EXISTS sig_ip ON signatures(ip_hash, created_at)');
+// Emails: stored for verification and (opt-in) updates, never exposed by the API.
+const cols = db.prepare('PRAGMA table_info(signatures)').all().map((c) => c.name);
+if (!cols.includes('email')) db.exec('ALTER TABLE signatures ADD COLUMN email TEXT');
+if (!cols.includes('opt_in')) db.exec('ALTER TABLE signatures ADD COLUMN opt_in INTEGER NOT NULL DEFAULT 0');
+db.exec('CREATE UNIQUE INDEX IF NOT EXISTS sig_email ON signatures(lower(email)) WHERE email IS NOT NULL');
 
 const count = db.prepare('SELECT COUNT(*) AS n FROM signatures');
 const recent = db.prepare('SELECT name, country, comment, created_at FROM signatures ORDER BY id DESC LIMIT 30');
-const sameName = db.prepare('SELECT 1 FROM signatures WHERE ip_hash = ? AND lower(name) = lower(?)');
+const sameEmail = db.prepare('SELECT 1 FROM signatures WHERE lower(email) = lower(?)');
 const lastHour = db.prepare("SELECT COUNT(*) AS n FROM signatures WHERE ip_hash = ? AND created_at > datetime('now','-1 hour')");
-const insert = db.prepare('INSERT INTO signatures (name, country, comment, ip_hash) VALUES (?, ?, ?, ?)');
+const insert = db.prepare('INSERT INTO signatures (name, country, comment, ip_hash, email, opt_in) VALUES (?, ?, ?, ?, ?, ?)');
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 const page = await readFile(new URL('./public/index.html', import.meta.url), 'utf8');
 
@@ -70,11 +76,15 @@ createServer(async (req, res) => {
       const name = clean(data.name, 60);
       const country = clean(data.country, 40);
       const comment = clean(data.comment, 280);
-      if (name.length < 2) return json(res, 400, { error: 'Please enter your name (or a nickname).' });
+      const email = clean(data.email, 254).toLowerCase();
+      const optIn = 1; // consent text says signers receive emails about the petition
+      if (name.length < 2) return json(res, 400, { error: 'Please enter your name.' });
+      if (!EMAIL_RE.test(email)) return json(res, 400, { error: 'Please enter a valid email address.' });
+      if (data.consent !== true && data.consent !== 'on') return json(res, 400, { error: 'Please agree to receive emails about this petition to sign.' });
       const h = ipHash(clientIp(req));
-      if (sameName.get(h, name)) return json(res, 409, { error: 'You already signed with that name. Thank you!' });
+      if (sameEmail.get(email)) return json(res, 409, { error: 'This email address has already signed. Thank you!' });
       if (lastHour.get(h).n >= 5) return json(res, 429, { error: 'Too many signatures from your connection. Try again later.' });
-      insert.run(name, country, comment, h);
+      insert.run(name, country, comment, h, email, optIn);
       return json(res, 201, { ok: true, count: count.get().n });
     }
     if (req.method === 'GET' && url.pathname === '/healthz') return json(res, 200, { ok: true });
