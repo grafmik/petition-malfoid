@@ -3,12 +3,13 @@
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { mkdirSync } from 'node:fs';
-import { createHash } from 'node:crypto';
+import { createHash, timingSafeEqual } from 'node:crypto';
 import { DatabaseSync } from 'node:sqlite';
 
 const PORT = Number(process.env.PORT || 3000);
 const DATA_DIR = process.env.DATA_DIR || './data';
 const SALT = process.env.IP_SALT || 'malfoid';
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN || ''; // enables GET /api/export when set (>= 32 chars)
 mkdirSync(DATA_DIR, { recursive: true });
 
 const db = new DatabaseSync(`${DATA_DIR}/signatures.db`);
@@ -32,6 +33,7 @@ const recent = db.prepare('SELECT name, country, comment, created_at FROM signat
 const sameEmail = db.prepare('SELECT 1 FROM signatures WHERE lower(email) = lower(?)');
 const lastHour = db.prepare("SELECT COUNT(*) AS n FROM signatures WHERE ip_hash = ? AND created_at > datetime('now','-1 hour')");
 const insert = db.prepare('INSERT INTO signatures (name, country, comment, ip_hash, email, opt_in) VALUES (?, ?, ?, ?, ?, ?)');
+const exportAll = db.prepare('SELECT id, created_at, name, email, country, opt_in, comment FROM signatures ORDER BY id');
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 const page = await readFile(new URL('./public/index.html', import.meta.url), 'utf8');
@@ -86,6 +88,18 @@ createServer(async (req, res) => {
       if (lastHour.get(h).n >= 5) return json(res, 429, { error: 'Too many signatures from your connection. Try again later.' });
       insert.run(name, country, comment, h, email, optIn);
       return json(res, 201, { ok: true, count: count.get().n });
+    }
+    if (req.method === 'GET' && url.pathname === '/api/export') {
+      const given = Buffer.from((req.headers.authorization || '').replace(/^Bearer /, ''));
+      const want = Buffer.from(ADMIN_TOKEN);
+      if (ADMIN_TOKEN.length < 32 || given.length !== want.length || !timingSafeEqual(given, want)) {
+        res.writeHead(404, { 'content-type': 'text/plain' }); return res.end('Not found');
+      }
+      const q = (v) => { v = String(v ?? ''); return /[",\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+      const lines = ['id,created_at,name,email,country,opt_in,comment'];
+      for (const r of exportAll.all()) lines.push([r.id, r.created_at, r.name, r.email, r.country, r.opt_in, r.comment].map(q).join(','));
+      res.writeHead(200, { 'content-type': 'text/csv; charset=utf-8', 'cache-control': 'no-store' });
+      return res.end(lines.join('\n') + '\n');
     }
     if (req.method === 'GET' && url.pathname === '/healthz') return json(res, 200, { ok: true });
     res.writeHead(404, { 'content-type': 'text/plain' }); res.end('Not found');
